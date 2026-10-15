@@ -63,8 +63,9 @@ test('events-list-locators-and-text-assertions', async ({ page }) => {
     const getEventPriceText = await eventCardPrice.innerText()
     console.log(getEventPriceText)
     expect(getEventPriceText).toBe(eventPriceRead)
+    await page.goBack()
 
-    await page.getByRole("button",{name:"Book Now"}).click()
+    await page.getByRole("button",{name:"Clear filters"}).click()
      expect(page.getByTestId('event-card')).toHaveCount(3)
 
 })
