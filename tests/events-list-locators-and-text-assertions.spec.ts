@@ -46,8 +46,14 @@ test('events-list-locators-and-text-assertions', async ({ page }) => {
   const parseDollarSign =  eventPriceRead.match(/\$/)?.[0] ?? ''
   console.log(parseDollarSign)
     await expect(eventPrice).toHaveText(/\$/)
-    await page.getByTestId('book-now-btn').click()
-    expect(page).toHaveURL(/\events/)
+   // await page.pause()
+   await  page.getByTestId('book-now-btn').waitFor({state:"visible"})
+    await page.getByRole('link',{name:"Book Now"}).click()
+    // await  page.waitForResponse('2000')
+    expect(page).toHaveURL(/events/)
+  
+
+
     const eventCard = page.locator('.p-4.flex.flex-col.flex-1')
     const eventPageTitleMatches = eventCard.getByRole('heading',{name:"World Tech Summit"})
     const readAndStoretitlenameFromTitlePage = await eventPageTitleMatches.innerText()
@@ -57,4 +63,8 @@ test('events-list-locators-and-text-assertions', async ({ page }) => {
     const getEventPriceText = await eventCardPrice.innerText()
     console.log(getEventPriceText)
     expect(getEventPriceText).toBe(eventPriceRead)
+
+    await page.getByRole("button",{name:"Book Now"}).click()
+     expect(page.getByTestId('event-card')).toHaveCount(3)
+
 })
