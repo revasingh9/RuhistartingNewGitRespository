@@ -39,7 +39,9 @@ test('events-list-locators-and-text-assertions', async ({ page }) => {
   console.log(parsednumberFromSeatText)
   expect(parsednumberFromSeatText).toBeGreaterThan(0)
   const eventPrice = page.getByTestId('event-card').locator('.text-lg.font-bold.text-indigo-700')
-  const eventPriceRead = eventPrice.innerText()
+  const eventPriceRead = await eventPrice.innerText()
   console.log(eventPrice)
-  const parseDollarSign =  parseInt(eventPriceRead.match(/\$/)?.[0] ?? '')
+  const parseDollarSign =  eventPriceRead.match(/\$/)?.[0] ?? '';
+  console.log(parseDollarSign)
+  await expect(eventPrice).toHaveText(/\$/)
 })
