@@ -21,9 +21,34 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install chromium --with-deps
+      
     - name: Run Playwright tests
       run: npx playwright test tests/events-list-locators-and-text-assertions.spec.ts
-    - name: Upload Playwright RReport Artifact
+      continue-on-error:  true
+      
+    - name: Get Allure history
+      uses: actions/checkout@v4
+      if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages
+        path: gh-pages
+        
+    - name: Allure Report Action
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
+      with:
+        allure_results: allure-results
+        allure_history: allure-history
+        
+    - name: Deploy Allure Report to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-history
+        
+    - name: Upload Playwright Report Artifact
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
@@ -31,14 +56,5 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
-  publish-report:
-        needs:  test
-        if: ${{ !cancelled()  }}
-        runs-on: ubuntu-latest
-        steps:
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v3
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN  }}
-            publish_dir: ./playwright-report
+ 
     
